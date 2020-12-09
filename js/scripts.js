@@ -66,6 +66,7 @@ function draw_player({ x, y }) {
 
 function redraw() {
     const c = document.getElementById('root');
-    // c.clear();
+    const ctx = c.getContext('2d');
+    ctx.clearRect(0, 0, c.width, c.height)
     draw_player(state.current.selfPos);
 }
