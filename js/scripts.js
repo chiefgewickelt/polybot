@@ -29,12 +29,12 @@ function stateReducer(state, action) {
             return { ...state, mousePos: action.mousePos };
         case ACTIONS.CLICK:
             const totalNumberOfClicks = state.totalNumberOfClicks + 1;
-
+	
             const isPlayerMovingToThatPosition = true;
             const selfPos = isPlayerMovingToThatPosition
                 ? action.mousePos
                 : state.selfPos;
-
+	
             return { ...state, totalNumberOfClicks, selfPos };
         default:
             throw new Error(`unknown action ${action.type}`);
@@ -67,6 +67,7 @@ window.onload = () => {
     const canvas = createCanvas();
     document.body.append(canvas);
     draw_line(33, 100, 200, 83);
+    redraw();
 };
 
 function createCanvas() {
@@ -75,6 +76,7 @@ function createCanvas() {
 
     canvas.addEventListener('click', e => {
         dispatch(createMouseClickAction(e));
+	redraw();
         const elapsedMinutes = (Date.now() - state.current.gameStartedAt) / (1000 * 60);
         const apm = state.current.totalNumberOfClicks / elapsedMinutes;
         console.log('APM', apm);
@@ -103,4 +105,16 @@ function draw_line(x1, y1, x2, y2) {
     ctx.lineTo(x2, y2);
     ctx.closePath();
     ctx.stroke();
+}
+
+function draw_player({x, y}) {
+    const c = document.getElementById('root');
+    const ctx = c.getContext('2d');
+    ctx.fillRect(x-7, y-7 ,14, 14);
+}
+
+function redraw() {
+    const c = document.getElementById('root');
+    // c.clear();
+    draw_player(state.current.selfPos);
 }
