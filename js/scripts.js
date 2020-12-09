@@ -76,6 +76,6 @@ function redraw() {
     draw_player(state.current.selfPos);
     const {conquerLine} = state.current;
     if (Array.isArray(conquerLine)) {
-	draw_poly_line(ctx,[...conquerLine, state.current.selfPos]);
+	draw_poly_line(ctx,conquerLine);
     }
 }

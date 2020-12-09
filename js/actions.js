@@ -38,8 +38,8 @@ export const clickAction = (() => {
                 : state.selfPos;
 	    const isConquering = Array.isArray(state.conquerLine);
 	    const conquerLine = isConquering
-		  ? [...state.conquerLine, state.selfPos]
-		  : [state.selfPos];
+		  ? [...state.conquerLine, selfPos]
+		  : [state.selfPos, selfPos];
             return { ...state, totalNumberOfClicks, selfPos, conquerLine };
         }
     }
