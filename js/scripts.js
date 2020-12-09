@@ -16,6 +16,10 @@ function createMouseMoveAction(e) {
 function createMouseClickAction(e) {
     return {
         type: ACTIONS.CLICK,
+        mousePos: {
+            x: e.clientX,
+            y: e.clientY,
+        },
     };
 }
 
@@ -25,7 +29,13 @@ function stateReducer(state, action) {
             return { ...state, mousePos: action.mousePos };
         case ACTIONS.CLICK:
             const totalNumberOfClicks = state.totalNumberOfClicks + 1;
-            return { ...state, totalNumberOfClicks };
+
+            const isPlayerMovingToThatPosition = true;
+            const selfPos = isPlayerMovingToThatPosition
+                ? action.mousePos
+                : state.selfPos;
+
+            return { ...state, totalNumberOfClicks, selfPos };
         default:
             throw new Error(`unknown action ${action.type}`);
     }
@@ -46,13 +56,16 @@ const [state, dispatch] = makeState(stateReducer, () => ({
     name: 'Player',
     totalNumberOfClicks: 0,
     gameStartedAt: Date.now(),
+    selfPos: {
+        x: 100 * Math.random(),
+        y: 100 * Math.random(),
+    },
 }));
 
 window.onload = () => {
     console.log(state);
     const canvas = createCanvas();
     document.body.append(canvas);
-    console.log('foo!');
     draw_line(33, 100, 200, 83);
 };
 
@@ -62,11 +75,10 @@ function createCanvas() {
 
     canvas.addEventListener('click', e => {
         dispatch(createMouseClickAction(e));
-        console.log('clickCount', state.current.totalNumberOfClicks);
-        console.log('when?', state.current.gameStartedAt);
         const elapsedMinutes = (Date.now() - state.current.gameStartedAt) / (1000 * 60);
         const apm = state.current.totalNumberOfClicks / elapsedMinutes;
         console.log('APM', apm);
+        console.log('POS', state.current.selfPos);
     });
 
     canvas.addEventListener('mousemove', e => {
