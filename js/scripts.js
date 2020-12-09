@@ -11,6 +11,7 @@ const [state, dispatch] = makeReducer(actions, () => ({
         x: 100 * Math.random(),
         y: 100 * Math.random(),
     },
+    conquerLine: null,
 }));
 
 window.onload = () => {
@@ -27,6 +28,7 @@ function createCanvas() {
 
     canvas.addEventListener('click', e => {
         dispatch(clickAction.create(e));
+	console.log(state.current.conquerLine);
         redraw();
         const elapsedMinutes = (Date.now() - state.current.gameStartedAt) / (1000 * 60);
         const apm = state.current.totalNumberOfClicks / elapsedMinutes;

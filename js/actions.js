@@ -36,8 +36,11 @@ export const clickAction = (() => {
             const selfPos = isPlayerMovingToThatPosition
                 ? action.mousePos
                 : state.selfPos;
-
-            return { ...state, totalNumberOfClicks, selfPos };
+	    const isConquering = Array.isArray(state.conquerLine);
+	    const conquerLine = isConquering
+		  ? [...state.conquerLine, state.selfPos]
+		  : [state.selfPos];
+            return { ...state, totalNumberOfClicks, selfPos, conquerLine };
         }
     }
 })();
