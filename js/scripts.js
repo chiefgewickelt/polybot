@@ -85,6 +85,13 @@ function createCanvas() {
         dispatch(createMouseMoveAction(e));
     });
 
+    const handleResize = () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    };
+    window.addEventListener('resize', handleResize);
+    handleResize();
+
     return canvas;
 }
 
