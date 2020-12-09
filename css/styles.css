@@ -1,9 +1,13 @@
-html, body, #root {
-    margin: 0;
-    padding: 0;
-    display: block;
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 #root {
-    background-color: #cccccc;
+  background-color: #cccccc;
 }
