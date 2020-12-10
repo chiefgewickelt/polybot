@@ -3,18 +3,22 @@ import { mouseMoveAction, clickAction } from './actions.js';
 import * as actions from './actions.js';
 import { makeReducer } from './makeReducer.js';
 
-const [state, dispatch] = makeReducer(actions, () => ({
-    name: 'Player',
-    totalNumberOfClicks: 0,
-    gameStartedAt: Date.now(),
-    selfPos: {
+const [state, dispatch] = makeReducer(actions, () => {
+    const selfPos = {
         x: 100 * Math.random(),
         y: 100 * Math.random(),
-    },
-    conquerLine: null,
-    collisions: [],
-    isAlive: true,
-}));
+    };
+    return {
+	name: 'Player',
+	totalNumberOfClicks: 0,
+	gameStartedAt: Date.now(),
+	selfPos,
+	conquerLine: null,
+	home: nGonAround(13, 71, selfPos),
+	collisions: [],
+	isAlive: true,
+    };
+});
 
 window.onload = () => {
     console.log(actions);
@@ -83,14 +87,36 @@ function draw_collisions(collisions) {
     ctx.fill();
 }
 
+function draw_polygon( points) {
+    const c = document.getElementById('root');
+    const ctx = c.getContext('2d');
+    ctx.beginPath();
+    points.forEach((point) => {
+	ctx.lineTo(point[0],point[1]);
+    });
+    ctx.closePath();
+    ctx.fill();
+}
+
 function redraw() {
     const c = document.getElementById('root');
     const ctx = c.getContext('2d');
     ctx.clearRect(0, 0, c.width, c.height);
     draw_collisions(state.current.collisions);
     draw_player(state.current.selfPos);
+    draw_polygon(state.current.home);
     const { conquerLine } = state.current;
     if (Array.isArray(conquerLine)) {
         draw_poly_line(ctx, conquerLine);
     }
+    
+}
+
+function nGonAround (n, distCenterCorner, center) {
+    if(n < 3) {
+	throw new Error('area needs at least 3 corners');
+    }
+    const dPhi = 2*Math.PI / n;
+    return [...Array(n).keys()]
+	.map((i) => [center.x +  distCenterCorner * Math.cos(i * dPhi), center.y + distCenterCorner * Math.sin(i* dPhi)]);
 }
