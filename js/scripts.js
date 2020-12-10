@@ -12,6 +12,8 @@ const [state, dispatch] = makeReducer(actions, () => ({
         y: 100 * Math.random(),
     },
     conquerLine: null,
+    collisions: [],
+    isAlive: true,
 }));
 
 window.onload = () => {
@@ -27,7 +29,7 @@ function createCanvas() {
 
     canvas.addEventListener('click', e => {
         dispatch(clickAction.create(e));
-	console.log(state.current.conquerLine);
+        console.log(state.current.conquerLine);
         redraw();
         const elapsedMinutes = (Date.now() - state.current.gameStartedAt) / (1000 * 60);
         const apm = state.current.totalNumberOfClicks / elapsedMinutes;
@@ -52,13 +54,13 @@ function createCanvas() {
 function draw_poly_line(ctx, points) {
     console.log(points);
     if (!Array.isArray(points) || points.length === 0) {
-	throw new Error ('zero points given');
+        throw new Error('zero points given');
     }
     const tail = [...points];
     const head = tail.shift();
     // ctx.beginPath();
     ctx.moveTo(head.x, head.y);
-    tail.forEach( ({x,y}) => ctx.lineTo(x,y) );
+    tail.forEach(({ x, y }) => ctx.lineTo(x, y));
     // ctx.closePath();
     ctx.stroke();
 }
@@ -69,13 +71,26 @@ function draw_player({ x, y }) {
     ctx.fillRect(x - 7, y - 7, 14, 14);
 }
 
+function draw_collisions(collisions) {
+    const c = document.getElementById('root');
+    const ctx = c.getContext('2d');
+    const radius = 10;
+    ctx.beginPath();
+    collisions.forEach(({ collision: { collisionPoint: { x, y } } }) => {
+        ctx.moveTo(x + radius, y);
+        ctx.arc(x, y, 10, 0, 2 * Math.PI);
+    });
+    ctx.fill();
+}
+
 function redraw() {
     const c = document.getElementById('root');
     const ctx = c.getContext('2d');
-    ctx.clearRect(0, 0, c.width, c.height)
+    ctx.clearRect(0, 0, c.width, c.height);
+    draw_collisions(state.current.collisions);
     draw_player(state.current.selfPos);
-    const {conquerLine} = state.current;
+    const { conquerLine } = state.current;
     if (Array.isArray(conquerLine)) {
-	draw_poly_line(ctx,conquerLine);
+        draw_poly_line(ctx, conquerLine);
     }
 }
