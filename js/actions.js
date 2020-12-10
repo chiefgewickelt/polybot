@@ -126,6 +126,34 @@ export const clickAction = (() => {
                     collisions: [...state.collisions, { collision, totalNumberOfClicks }],
                 };
             }
+	    //no collision with conquerLine here,
+	    const  homeEdges =
+		  [...(state.home.map((_,indx) => indx).slice(1)
+		       .map((endIndx) => ({
+			   prevPoint: ({
+			       x: state.home[endIndx - 1 ][0],
+			       y: state.home[endIndx - 1][1],
+			   }),
+		       	   nextPoint: ({
+			       x: state.home[endIndx][0],
+			       y: state.home[endIndx][1],
+			   })
+		       }))),
+		  ({//edge connecting last and first point:
+		      prevPoint: ({
+			  x: state.home[state.home.length - 1][0],
+			  y: state.home[state.home.length - 1][1]
+		      }),
+		      nextPoint: ({
+			  x:state.home[0][0],
+			  y: state.home[0][1]
+		      })
+		  })];
+	    const realCollisionsWithHomeEdges = homeEdges
+		  .map( (homeEdge) => detectCollisionWithEdge( state.selfPos, homeEdge, action.mousePos ))
+		  .filter( ({isReal}) => isReal);
+	    console.log('homeCollisions:');
+	    console.log(realCollisionsWithHomeEdges);
             return {
                 ...state,
                 totalNumberOfClicks,
