@@ -5,8 +5,8 @@ import { makeReducer } from './makeReducer.js';
 
 const [state, dispatch] = makeReducer(actions, () => {
     const selfPos = {
-        x: 100 * Math.random(),
-        y: 100 * Math.random(),
+        x: 250 * Math.random(),
+        y: 250 * Math.random(),
     };
     return {
 	name: 'Player',
@@ -79,6 +79,7 @@ function draw_collisions(collisions) {
     const c = document.getElementById('root');
     const ctx = c.getContext('2d');
     const radius = 10;
+    ctx.fillStyle = '#000';
     ctx.beginPath();
     collisions.forEach(({ collision: { collisionPoint: { x, y } } }) => {
         ctx.moveTo(x + radius, y);
@@ -87,9 +88,11 @@ function draw_collisions(collisions) {
     ctx.fill();
 }
 
-function draw_polygon( points) {
+function draw_polygon( points, fillcolor = '#11cc00') {
     const c = document.getElementById('root');
     const ctx = c.getContext('2d');
+    
+    ctx.fillStyle = fillcolor;
     ctx.beginPath();
     points.forEach((point) => {
 	ctx.lineTo(point[0],point[1]);
@@ -102,9 +105,9 @@ function redraw() {
     const c = document.getElementById('root');
     const ctx = c.getContext('2d');
     ctx.clearRect(0, 0, c.width, c.height);
+    draw_polygon(state.current.home);
     draw_collisions(state.current.collisions);
     draw_player(state.current.selfPos);
-    draw_polygon(state.current.home);
     const { conquerLine } = state.current;
     if (Array.isArray(conquerLine)) {
         draw_poly_line(ctx, conquerLine);
