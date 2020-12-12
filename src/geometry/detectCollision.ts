@@ -1,13 +1,13 @@
-import { Edge } from "src/type/Edge";
+import { Collision } from "src/type/Collision";
 import { Point } from "src/type/Point";
 import { calcDirectionVector } from "./calcDirectionVector";
 
 type PrevAndNextPoint = { prevPoint: Point; nextPoint: Point };
-export function detectCollisionWithEdge(
+export function detectCollision(
   from: Point,
   edge: PrevAndNextPoint,
   to: Point
-) {
+): Collision {
   const { prevPoint, nextPoint } = edge;
 
   const walkDirection = calcDirectionVector(from, to);
