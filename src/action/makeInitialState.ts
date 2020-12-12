@@ -11,6 +11,7 @@ export function makeInitialState(): State {
     totalNumberOfClicks: 0,
     gameStartedAt: Date.now(),
     selfPos,
+    travelAngleInRadian: 0,
     conquerLine: null,
     mousePos: { x: 0, y: 0 },
     home: makePolygon(13, 71, selfPos),

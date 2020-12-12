@@ -6,6 +6,7 @@ export type State = {
   totalNumberOfClicks: number;
   gameStartedAt: number;
   selfPos: Point;
+  travelAngleInRadian: number;
   conquerLine: Point[] | null;
   home: Point[];
   collisions: Collision[];

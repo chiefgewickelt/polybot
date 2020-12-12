@@ -1,10 +1,17 @@
 import React from "react";
-import { clickAction } from "src/action/clickAction";
 import { mouseMoveAction } from "src/action/mouseMoveAction";
-import "./Canvas.css";
-import { clearCanvas, draw } from "./draw";
+import { tickAction } from "src/action/tickAction";
 import { useViewportSize } from "src/hook/useViewportSize";
 import { useStore } from "src/store/useStore";
+import "./Canvas.css";
+import { clearCanvas, draw } from "./draw";
+
+function useInterval(f: () => void, ms: number) {
+  React.useEffect(() => {
+    const id = window.setInterval(f, ms);
+    return () => window.clearInterval(id);
+  }, [f, ms]);
+}
 
 export function Canvas() {
   const [state, dispatch] = useStore();
@@ -19,10 +26,6 @@ export function Canvas() {
     dispatch(mouseMoveAction.create(e));
   };
 
-  const handleClick = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
-    dispatch(clickAction.create(e));
-  };
-
   React.useEffect(() => {
     const canvas = ref.current;
     if (!canvas) return;
@@ -30,10 +33,15 @@ export function Canvas() {
     return () => clearCanvas(canvas);
   }, [ref, state]);
 
+  const dispatchTick = React.useCallback(() => dispatch(tickAction.create()), [
+    dispatch,
+    tickAction,
+  ]);
+  useInterval(dispatchTick, 20);
+
   return (
     <canvas
       id="canvas"
-      onClick={handleClick}
       onMouseMove={handleMouseMove}
       width={viewportSize.width}
       height={viewportSize.height}

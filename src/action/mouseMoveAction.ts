@@ -1,3 +1,5 @@
+import { calcDirectionVector } from "src/geometry/calcDirectionVector";
+import { calcVectorLength } from "src/geometry/calcVectorLength";
 import { ActionDefinition } from "src/type/ActionDefinition";
 import { Point } from "src/type/Point";
 import { State } from "src/type/State";
@@ -20,9 +22,20 @@ function create(e: React.MouseEvent<HTMLElement, MouseEvent>): MouseMoveAction {
 }
 
 function handle(state: State, action: MouseMoveAction): State {
+  const { mousePos } = action;
+
+  const from = state.selfPos;
+  const to = mousePos;
+
+  const { dx, dy } = calcDirectionVector(from, to);
+  const travelLength = calcVectorLength({ dx, dy });
+  const travelAngleInRadian =
+    travelLength > 0 ? Math.atan2(dy, dx) : state.travelAngleInRadian;
+
   return {
     ...state,
-    mousePos: action.mousePos,
+    mousePos,
+    travelAngleInRadian,
   };
 }
 

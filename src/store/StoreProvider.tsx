@@ -1,11 +1,14 @@
 import React, { ReactNode } from "react";
-import { clickAction } from "src/action/clickAction";
 import { makeInitialState } from "src/action/makeInitialState";
 import { mouseMoveAction } from "src/action/mouseMoveAction";
+import { tickAction } from "src/action/tickAction";
 import { makeActionReducer } from "./makeActionReducer";
 import { StoreContext } from "./StoreContext";
 
-export const reducer = makeActionReducer([clickAction, mouseMoveAction]);
+export const reducer = makeActionReducer([
+  mouseMoveAction,
+  tickAction,
+]);
 
 type StoreProviderProps = { children: ReactNode };
 export function StoreProvider({ children }: StoreProviderProps) {

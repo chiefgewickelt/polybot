@@ -7,20 +7,15 @@ import { Collision } from "src/type/Collision";
 import { Point } from "src/type/Point";
 import { State } from "src/type/State.d";
 
-type ClickAction = {
+type TickAction = {
   type: string;
-  mousePos: Point;
 };
 
-const type = "CLICK";
+const type = "TICK";
 
-function create(e: React.MouseEvent<HTMLElement, MouseEvent>): ClickAction {
+function create(): TickAction {
   return {
     type,
-    mousePos: {
-      x: e.clientX,
-      y: e.clientY,
-    },
   };
 }
 
@@ -34,8 +29,8 @@ type CollisionWithPartner = {
   collision: Collision;
 };
 
-function handleMove(state: State, action: ClickAction): State {
-  const selfPos = action.mousePos;
+function handleMove(state: State, to: Point): State {
+  const selfPos = to;
   const conquerLine = state.conquerLine
     ? [...state.conquerLine, selfPos]
     : null;
@@ -79,13 +74,13 @@ function handleHomeCollision(state: State, homeCollision: Collision): State {
 
 function handleCollisions(
   state: State,
-  action: ClickAction,
+  to: Point,
   ...collisions: CollisionWithPartner[]
 ): State {
   if (!state.isAlive) return state;
 
   const curr = collisions.shift();
-  if (!curr) return handleMove(state, action);
+  if (!curr) return handleMove(state, to);
 
   const collisionHandler = {
     [CollisionPartner.ConquerLine]: handleConquerCollision,
@@ -94,20 +89,23 @@ function handleCollisions(
 
   return handleCollisions(
     collisionHandler(state, curr.collision),
-    action,
+    to,
     ...collisions
   );
 }
 
-function handle(state: State, action: ClickAction): State {
-  const totalNumberOfClicks = state.totalNumberOfClicks + 1;
+function handle(state: State, action: TickAction): State {
+  if (!state.isAlive) return state;
 
-  const next = { ...state, totalNumberOfClicks };
+  const phi = state.travelAngleInRadian;
 
-  if (!state.isAlive) return next;
+  const velocity = 10; // TODO: compensate frame rate
 
   const from = state.selfPos;
-  const to = action.mousePos;
+  const to = {
+    x: from.x + Math.cos(phi) * velocity,
+    y: from.y + Math.sin(phi) * velocity,
+  };
 
   const homeEdges = polygonToEdges(state.home);
   const homeCollisions = detectRealCollisions(from, homeEdges, to).map(
@@ -131,10 +129,10 @@ function handle(state: State, action: ClickAction): State {
     "collision.tau"
   );
 
-  return handleCollisions(state, action, ...collisions);
+  return handleCollisions(state, to, ...collisions);
 }
 
-export const clickAction: ActionDefinition = {
+export const tickAction: ActionDefinition = {
   type,
   create,
   handle,

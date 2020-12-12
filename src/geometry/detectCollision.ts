@@ -16,7 +16,13 @@ export function detectCollision(
   const den =
     edgeDirection.dy * walkDirection.dx - edgeDirection.dx * walkDirection.dy;
   if (den === 0) {
-    throw new Error("TODO: handle parallel and degenerate cases");
+    return {
+      edge,
+      tau: 0.5,
+      mu: 0.5,
+      collisionPoint: { x: 0, y: 0 },
+      isReal: false,
+    };
   }
 
   // tau * (edgeNormal, walkDirection) = (edgeNormal, prevPoint - from)
