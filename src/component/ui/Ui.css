@@ -1,0 +1,10 @@
+.reset-button {
+  display: block;
+  position: absolute;
+  bottom: 1em;
+  right: 1em;
+  background-color: #ff0000;
+  color: #ffffff;
+  font-size: large;
+  padding: 1em;
+}

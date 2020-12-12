@@ -1,5 +1,4 @@
 import React from "react";
-import { mouseMoveAction } from "src/action/mouseMoveAction";
 import { tickAction } from "src/action/tickAction";
 import { useViewportSize } from "src/hook/useViewportSize";
 import { useStore } from "src/store/useStore";
@@ -20,12 +19,6 @@ export function Canvas() {
 
   const viewportSize = useViewportSize();
 
-  const handleMouseMove = (
-    e: React.MouseEvent<HTMLCanvasElement, MouseEvent>
-  ) => {
-    dispatch(mouseMoveAction.create(e));
-  };
-
   React.useEffect(() => {
     const canvas = ref.current;
     if (!canvas) return;
@@ -42,7 +35,6 @@ export function Canvas() {
   return (
     <canvas
       id="canvas"
-      onMouseMove={handleMouseMove}
       width={viewportSize.width}
       height={viewportSize.height}
       ref={ref}
