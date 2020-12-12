@@ -6,11 +6,11 @@ import "./Ui.css";
 export function Ui() {
   const playerName = "Player";
 
-  const [state, dispatch] = useStore();
+  const [, dispatch] = useStore();
 
   const handleReset = React.useCallback(() => {
     dispatch(resetAction.create({ playerName }));
-  }, [playerName]);
+  }, [dispatch, playerName]);
 
   return (
     <button onClick={handleReset} className="reset-button">

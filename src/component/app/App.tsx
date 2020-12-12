@@ -14,7 +14,7 @@ function MouseWatcher({ children }: MouseWatcherProps) {
     dispatch(mouseMoveAction.create(e));
   };
 
-  const [state, dispatch] = useStore();
+  const [, dispatch] = useStore();
 
   return <main onMouseMove={handleMouseMove}>{children}</main>;
 }

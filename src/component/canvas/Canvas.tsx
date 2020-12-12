@@ -28,7 +28,6 @@ export function Canvas() {
 
   const dispatchTick = React.useCallback(() => dispatch(tickAction.create()), [
     dispatch,
-    tickAction,
   ]);
   useInterval(dispatchTick, 20);
 
