@@ -39,17 +39,24 @@ function handleMove(state: State, to: Point): State {
 
 //////////////////////////////
 //moveToGeometry TODO:
-function isClockwiseLine( line: Point[]): Boolean {
-if (! line) {
-  throw new Error('empty line to isClockwiseLIne');
-}
+function isClockwiseLine(line: Point[]): Boolean {
+  if (!line) {
+    throw new Error("empty line to isClockwiseLIne");
+  }
 
-const edges = polylineToEdges(line);
-return  0 > edges.map((edge) => (edge.nextPoint.x - edge.prevPoint.x) * (edge.nextPoint.y + edge.prevPoint.y))
-.reduce((a,b) => a + b);
+  const edges = polylineToEdges(line);
+  return (
+    0 >
+    edges
+      .map(
+        (edge) =>
+          (edge.nextPoint.x - edge.prevPoint.x) *
+          (edge.nextPoint.y + edge.prevPoint.y)
+      )
+      .reduce((a, b) => a + b)
+  );
 }
 ///////////////////////////
-
 
 function handleConquerCommit(state: State, homeCollision: Collision): State {
   if (!state.conquerLine) {
@@ -60,9 +67,8 @@ function handleConquerCommit(state: State, homeCollision: Collision): State {
   // TODO: consider recalculation of all collisions
 
   const selfPos = homeCollision.collisionPoint;
-  console.log('clockwise : ');
+  console.log("clockwise : ");
   console.log(isClockwiseLine(state.conquerLine));
-
 
   const conquerLine = null;
   const collisions = [...state.collisions, homeCollision];
@@ -87,7 +93,7 @@ function handleHomeCollision(state: State, homeCollision: Collision): State {
 
   const conquerLine = [homeCollision.collisionPoint];
   const collisions = [...state.collisions, homeCollision];
-  console.log('goint into the wild');
+  console.log("goint into the wild");
   console.log(collisions);
   return { ...state, conquerLine, collisions };
 }
