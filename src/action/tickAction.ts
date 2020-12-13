@@ -1,4 +1,4 @@
-import _ from "lodash";
+import _, { isNull } from "lodash";
 import { detectRealCollisions } from "src/geometry/detectRealCollisions";
 import { polygonToEdges } from "src/geometry/polygonToEdges";
 import { polylineToEdges } from "src/geometry/polylineToEdges";
@@ -37,6 +37,22 @@ function handleMove(state: State, to: Point): State {
   return { ...state, selfPos, conquerLine };
 }
 
+//////////////////////////////
+//moveToGeometry TODO:
+function isClockwiseLine( line: Point[]): Boolean {
+if (! line) {
+  throw new Error('empty line to isClockwiseLIne');
+}
+var indicator = 0;
+const edges = polylineToEdges(line);
+edges.forEach((edge) => {
+  indicator+= (edge.nextPoint.x - edge.prevPoint.x) * (edge.nextPoint.y + edge.prevPoint.y);
+});
+return indicator < 0;
+}
+///////////////////////////
+
+
 function handleConquerCommit(state: State, homeCollision: Collision): State {
   if (!state.conquerLine) {
     throw new Error();
@@ -46,6 +62,10 @@ function handleConquerCommit(state: State, homeCollision: Collision): State {
   // TODO: consider recalculation of all collisions
 
   const selfPos = homeCollision.collisionPoint;
+  console.log('clockwise : ');
+  console.log(isClockwiseLine(state.conquerLine));
+
+
   const conquerLine = null;
   const collisions = [...state.collisions, homeCollision];
   return { ...state, conquerLine, selfPos, collisions };
@@ -69,6 +89,8 @@ function handleHomeCollision(state: State, homeCollision: Collision): State {
 
   const conquerLine = [homeCollision.collisionPoint];
   const collisions = [...state.collisions, homeCollision];
+  console.log('goint into the wild');
+  console.log(collisions);
   return { ...state, conquerLine, collisions };
 }
 
