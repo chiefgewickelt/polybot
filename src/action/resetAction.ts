@@ -6,6 +6,7 @@ type ResetAction = {
   type: string;
   playerName: string;
   spawnPos: Point;
+  travelAngleInRadian: number;
   dim: Dim;
 };
 
@@ -18,6 +19,8 @@ function create({ playerName, ...args }: ResetArgs): ResetAction {
     y: 250 * Math.random(),
   };
 
+  const travelAngleInRadian = Math.random() * 2 * Math.PI - Math.PI;
+
   const dim = {
     width: window.innerWidth,
     height: window.innerHeight,
@@ -27,19 +30,20 @@ function create({ playerName, ...args }: ResetArgs): ResetAction {
     type,
     playerName,
     spawnPos,
+    travelAngleInRadian,
     dim,
   };
 }
 
 function handle(state: State | undefined, action: ResetAction): State {
-  const { playerName, spawnPos: selfPos, dim } = action;
+  const { playerName, spawnPos: selfPos, dim, travelAngleInRadian } = action;
 
   return {
     name: playerName,
     totalNumberOfClicks: 0,
     gameStartedAt: Date.now(),
     selfPos,
-    travelAngleInRadian: 0,
+    travelAngleInRadian,
     conquerLine: null,
     mousePos: { x: 0, y: 0 },
     home: makePolygon(13, 71, selfPos),
