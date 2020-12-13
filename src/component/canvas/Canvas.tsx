@@ -30,7 +30,7 @@ export function Canvas() {
     dispatch,
   ]);
   useInterval(dispatchTick, 20);
-console.log(viewportSize);
+
   return (
     <canvas
       id="canvas"
