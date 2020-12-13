@@ -64,7 +64,7 @@ export function draw(canvas: HTMLCanvasElement, state: State) {
   if (!ctx) {
     throw new Error("invalid context");
   }
-  const offset = {x :  canvas.width/2 - state.selfPos.x, y : canvas.height/2 - state.selfPos.y  };
+  const offset = {x :  state.dim.width/2 - state.selfPos.x, y : state.dim.height/2 - state.selfPos.y  };
   draw_polygon({ctx, points: state.home, fillcolor: "#11cc33", offset});
   draw_collisions({ctx, collisions: state.collisions, offset});
   draw_player({ctx, pos: state.selfPos, offset});
