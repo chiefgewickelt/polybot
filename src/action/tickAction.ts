@@ -1,4 +1,4 @@
-import _, { isNull } from "lodash";
+import _ from "lodash";
 import { detectRealCollisions } from "src/geometry/detectRealCollisions";
 import { polygonToEdges } from "src/geometry/polygonToEdges";
 import { polylineToEdges } from "src/geometry/polylineToEdges";
@@ -43,12 +43,10 @@ function isClockwiseLine( line: Point[]): Boolean {
 if (! line) {
   throw new Error('empty line to isClockwiseLIne');
 }
-var indicator = 0;
+
 const edges = polylineToEdges(line);
-edges.forEach((edge) => {
-  indicator+= (edge.nextPoint.x - edge.prevPoint.x) * (edge.nextPoint.y + edge.prevPoint.y);
-});
-return indicator < 0;
+return  0 > edges.map((edge) => (edge.nextPoint.x - edge.prevPoint.x) * (edge.nextPoint.y + edge.prevPoint.y))
+.reduce((a,b) => a + b);
 }
 ///////////////////////////
 
