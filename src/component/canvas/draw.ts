@@ -68,7 +68,7 @@ export function draw(canvas: HTMLCanvasElement, state: State) {
   draw_polygon({ctx, points: state.home, fillcolor: "#11cc33", offset});
   draw_collisions({ctx, collisions: state.collisions, offset});
   draw_player({ctx, pos: state.selfPos, offset});
-  //draw_mouse({ctx, pos: state.mousePos, offset: {x: -offset.x, y: -offset.y}});
+  draw_mouse({ctx, pos: state.mousePos});
   const { conquerLine } = state;
   if (conquerLine) {
     draw_poly_line({ctx, points: conquerLine, offset});
