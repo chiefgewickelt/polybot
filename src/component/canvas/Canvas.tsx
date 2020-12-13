@@ -1,6 +1,5 @@
 import React from "react";
 import { tickAction } from "src/action/tickAction";
-import { useViewportSize } from "src/hook/useViewportSize";
 import { useStore } from "src/store/useStore";
 import "./Canvas.css";
 import { clearCanvas, draw } from "./draw";
@@ -17,8 +16,6 @@ export function Canvas() {
 
   const ref = React.useRef<HTMLCanvasElement | null>(null);
 
-  const viewportSize = useViewportSize();
-
   React.useEffect(() => {
     const canvas = ref.current;
     if (!canvas) return;
@@ -31,12 +28,7 @@ export function Canvas() {
   ]);
   useInterval(dispatchTick, 20);
 
-  return (
-    <canvas
-      id="canvas"
-      width={viewportSize.width}
-      height={viewportSize.height}
-      ref={ref}
-    ></canvas>
-  );
+  const { width, height } = state.dim;
+
+  return <canvas id="canvas" {...{ width, height, ref }}></canvas>;
 }

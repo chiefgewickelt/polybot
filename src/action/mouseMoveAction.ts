@@ -1,6 +1,5 @@
 import { calcDirectionVector } from "src/geometry/calcDirectionVector";
 import { calcVectorLength } from "src/geometry/calcVectorLength";
-import { useViewportSize } from "src/hook/useViewportSize";
 import { ActionDefinition } from "src/type/ActionDefinition";
 import { Point } from "src/type/Point";
 import { State } from "src/type/State";
@@ -26,7 +25,11 @@ function handle(state: State, action: MouseMoveAction): State {
   const { mousePos } = action;
 
   const from = state.selfPos;
-  const to = {x: mousePos.x - 1920/2 + state.selfPos.x , y : mousePos.y - 949/2 + state.selfPos.y};//<-------dirty hack found TODO: variable viewPort size, die KOnstanten sind res * 0.5
+  const { width, height } = state.dim;
+  const to = {
+    x: mousePos.x - width / 2 + state.selfPos.x,
+    y: mousePos.y - height / 2 + state.selfPos.y,
+  };
 
   const { dx, dy } = calcDirectionVector(from, to);
   const travelLength = calcVectorLength({ dx, dy });

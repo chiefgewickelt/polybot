@@ -1,11 +1,12 @@
 import { makePolygon } from "src/geometry/makePolygon";
 import { Point } from "src/type/Point";
-import { State } from "src/type/State";
+import { Dim, State } from "src/type/State";
 
 type ResetAction = {
   type: string;
   playerName: string;
   spawnPos: Point;
+  dim: Dim;
 };
 
 const type = "RESET";
@@ -17,15 +18,21 @@ function create({ playerName, ...args }: ResetArgs): ResetAction {
     y: 250 * Math.random(),
   };
 
+  const dim = {
+    width: window.innerWidth,
+    height: window.innerHeight,
+  };
+
   return {
     type,
     playerName,
     spawnPos,
+    dim,
   };
 }
 
 function handle(state: State | undefined, action: ResetAction): State {
-  const { playerName, spawnPos: selfPos } = action;
+  const { playerName, spawnPos: selfPos, dim } = action;
 
   return {
     name: playerName,
@@ -38,6 +45,7 @@ function handle(state: State | undefined, action: ResetAction): State {
     home: makePolygon(13, 71, selfPos),
     collisions: [],
     isAlive: true,
+    dim,
   };
 }
 

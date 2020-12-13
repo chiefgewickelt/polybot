@@ -1,6 +1,11 @@
 import { Collision } from "./Collision";
 import { Point } from "./Point";
 
+type Dim = {
+  width: number;
+  height: number;
+};
+
 export type State = {
   name: string;
   totalNumberOfClicks: number;
@@ -12,4 +17,5 @@ export type State = {
   collisions: Collision[];
   mousePos: Point;
   isAlive: boolean;
+  dim: Dim;
 };
