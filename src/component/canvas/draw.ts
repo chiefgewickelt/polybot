@@ -2,56 +2,60 @@ import { Collision } from "src/type/Collision";
 import { Point } from "src/type/Point";
 import { State } from "src/type/State";
 
-function draw_poly_line(ctx: CanvasRenderingContext2D, points: Point[]) {
+type drawPolyLineArgs = {ctx: CanvasRenderingContext2D, points: Point[], offset?: Point};
+function draw_poly_line({ctx, points, ...args}: drawPolyLineArgs) {
+  const offset = args.offset ?? {x: 0 , y: 0};
   const tail = [...points];
   const head = tail.shift();
   if (!head) {
     throw new Error("zero points given");
   }
-  // ctx.beginPath();
-  ctx.moveTo(head.x, head.y);
-  tail.forEach(({ x, y }) => ctx.lineTo(x, y));
-  // ctx.closePath();
-  ctx.stroke();
+   ctx.moveTo(head.x + offset.x, head.y + offset.y);
+  tail.forEach(({ x, y }) => ctx.lineTo(x + offset.x, y + offset.y));
+   ctx.stroke();
 }
 
-function draw_player(ctx: CanvasRenderingContext2D, { x, y }: Point) {
-  ctx.fillRect(x - 7, y - 7, 14, 14);
+type drawPlayerArgs = {ctx: CanvasRenderingContext2D, pos: Point, offset?: Point};
+function draw_player({ctx, pos, ...args} : drawPlayerArgs) {
+  const offset = args.offset ?? {x: 0, y: 0};
+  const playerRadius = 7;// TODO better name
+  const {x, y} = pos;
+  ctx.fillRect(x + offset.x - playerRadius, y + offset.y - playerRadius, 2*playerRadius, 2*playerRadius);
 }
 
-function draw_collisions(
-  ctx: CanvasRenderingContext2D,
-  collisions: Collision[]
-) {
+type DrawCollisionArgs = {ctx: CanvasRenderingContext2D, collisions: Collision[], offset?: Point};
+function draw_collisions({ctx,  collisions, ...args}: DrawCollisionArgs){
+  const  offset = args.offset ?? {x: 0, y: 0};
   const radius = 10;
   ctx.fillStyle = "#000000";
   ctx.beginPath();
   collisions.forEach(({ collisionPoint: { x, y } }) => {
-    ctx.moveTo(x + radius, y);
-    ctx.arc(x, y, 10, 0, 2 * Math.PI);
+    ctx.moveTo(x + offset.x + radius, y + offset.y);
+    ctx.arc(x + offset.x, y + offset.y, 10, 0, 2 * Math.PI);
   });
   ctx.fill();
 }
 
-function draw_polygon(
-  ctx: CanvasRenderingContext2D,
-  points: Point[],
-  fillcolor: string = "#11cc00"
-) {
+type drawPolygonArgs = {ctx: CanvasRenderingContext2D, points: Point[], fillcolor: string, offset?: Point};
+function draw_polygon({ctx, points, fillcolor, ...args}: drawPolygonArgs) {
+const offset = args.offset ?? {x: 0 , y: 0};
   ctx.fillStyle = fillcolor;
   ctx.beginPath();
   points.forEach(({ x, y }) => {
-    ctx.lineTo(x, y);
+    ctx.lineTo(x + offset.x, y + offset.y);
   });
   ctx.closePath();
   ctx.fill();
 }
 
-function draw_mouse(ctx: CanvasRenderingContext2D, { x, y }: Point) {
+type drawMouseArgs = {ctx: CanvasRenderingContext2D, pos: Point, offset?: Point}
+function draw_mouse({ctx, pos, ...args}: drawMouseArgs) {
+  const offset = args.offset ?? {x:0, y:0};
+  const {x, y} = pos;
   const radius = 4;
   ctx.beginPath();
-  ctx.moveTo(x + radius, y);
-  ctx.arc(x, y, 10, 0, 2 * Math.PI);
+  ctx.moveTo(x + offset.x + radius, y + offset.y);
+  ctx.arc(x + offset.y , y + offset.y,  10, 0, 2 * Math.PI);
   ctx.fill();
 }
 
@@ -60,13 +64,14 @@ export function draw(canvas: HTMLCanvasElement, state: State) {
   if (!ctx) {
     throw new Error("invalid context");
   }
-  draw_polygon(ctx, state.home);
-  draw_collisions(ctx, state.collisions);
-  draw_player(ctx, state.selfPos);
-  draw_mouse(ctx, state.mousePos);
+  const offset = {x :  canvas.width/2 - state.selfPos.x, y : canvas.height/2 - state.selfPos.y  };
+  draw_polygon({ctx, points: state.home, fillcolor: "#11cc33", offset});
+  draw_collisions({ctx, collisions: state.collisions, offset});
+  draw_player({ctx, pos: state.selfPos, offset});
+  draw_mouse({ctx, pos: state.mousePos, offset});
   const { conquerLine } = state;
   if (conquerLine) {
-    draw_poly_line(ctx, conquerLine);
+    draw_poly_line({ctx, points: conquerLine, offset});
   }
 }
 
