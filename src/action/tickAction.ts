@@ -1,4 +1,8 @@
 import _ from "lodash";
+import {
+  detectPolygonSense,
+  PolygonSense
+} from "src/geometry/detectPolygonSense";
 import { detectRealCollisions } from "src/geometry/detectRealCollisions";
 import { polygonToEdges } from "src/geometry/polygonToEdges";
 import { polylineToEdges } from "src/geometry/polylineToEdges";
@@ -37,42 +41,46 @@ function handleMove(state: State, to: Point): State {
   return { ...state, selfPos, conquerLine };
 }
 
-//////////////////////////////
-//moveToGeometry TODO:
-function isClockwiseLine(line: Point[]): Boolean {
-  if (!line) {
-    throw new Error("empty line to isClockwiseLIne");
-  }
-
-  const edges = polylineToEdges(line);
-  return (
-    0 >
-    edges
-      .map(
-        (edge) =>
-          (edge.nextPoint.x - edge.prevPoint.x) *
-          (edge.nextPoint.y + edge.prevPoint.y)
-      )
-      .reduce((a, b) => a + b)
-  );
-}
-///////////////////////////
-
 function handleConquerCommit(state: State, homeCollision: Collision): State {
   if (!state.conquerLine) {
     throw new Error();
   }
 
-  console.log("Congratulations! However, this feature is work in progress...");
   // TODO: consider recalculation of all collisions
 
   const selfPos = homeCollision.collisionPoint;
-  console.log("clockwise : ");
-  console.log(isClockwiseLine(state.conquerLine));
+  const conquerSense = detectPolygonSense(state.conquerLine);
+  const homeSense = detectPolygonSense(state.home);
+
+  const startIdx = state.conquerStart?.edge?.edgeIdx;
+  const endIdx = homeCollision.edge.edgeIdx;
+  if (startIdx === undefined || endIdx === undefined) {
+    throw new Error("undefined start or end");
+  }
+  if ([conquerSense, homeSense].includes(PolygonSense.degenerate)) {
+    throw new Error("degenerate home or conquer");
+  }
+
+  const sign = conquerSense === homeSense ? 1 : -1;
+
+  const normalizedConquerLine =
+    sign > 0 ? state.conquerLine : [...state.conquerLine].reverse();
+
+  const minIdx = Math.min(startIdx, endIdx);
+  const maxIdx = Math.max(startIdx, endIdx);
+
+  const home =
+    sign * (startIdx - endIdx) <= 0
+      ? [
+          ...state.home.slice(0, minIdx + 1),
+          ...normalizedConquerLine,
+          ...state.home.slice(maxIdx + 1),
+        ]
+      : [...normalizedConquerLine, ...state.home.slice(minIdx + 1, maxIdx + 1)];
 
   const conquerLine = null;
   const collisions = [...state.collisions, homeCollision];
-  return { ...state, conquerLine, selfPos, collisions };
+  return { ...state, home, conquerLine, selfPos, collisions };
 }
 
 function handleConquerCollision(state: State, selfCollision: Collision): State {
@@ -92,10 +100,9 @@ function handleHomeCollision(state: State, homeCollision: Collision): State {
   // FIXME: `homeCollision` might just be outdated due to a recent conquer commit
 
   const conquerLine = [homeCollision.collisionPoint];
+  const conquerStart = homeCollision;
   const collisions = [...state.collisions, homeCollision];
-  console.log("goint into the wild");
-  console.log(collisions);
-  return { ...state, conquerLine, collisions };
+  return { ...state, conquerLine, conquerStart, collisions };
 }
 
 function handleCollisions(

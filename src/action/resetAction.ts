@@ -45,6 +45,7 @@ function handle(state: State | undefined, action: ResetAction): State {
     selfPos,
     travelAngleInRadian,
     conquerLine: null,
+    conquerStart: null,
     mousePos: { x: 0, y: 0 },
     home: makePolygon(13, 71, selfPos),
     collisions: [],

@@ -1,8 +1,8 @@
-import { Point } from "./Point";
 import { Edge } from "./Edge";
+import { Point } from "./Point";
 
 export type Collision = {
-  edge: { prevPoint: Point; nextPoint: Point };
+  edge: Edge;
   tau: number;
   mu: number;
   isReal: boolean;

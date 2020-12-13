@@ -13,6 +13,7 @@ export type State = {
   selfPos: Point;
   travelAngleInRadian: number;
   conquerLine: Point[] | null;
+  conquerStart: Collision | null;// TODO
   home: Point[];
   collisions: Collision[];
   mousePos: Point;
