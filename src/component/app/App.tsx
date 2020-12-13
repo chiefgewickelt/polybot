@@ -22,9 +22,7 @@ function MouseWatcher({ children }: MouseWatcherProps) {
 
 type ResizeWatcherProps = { children: ReactNode };
 function ResizeWatcher({ children }: ResizeWatcherProps) {
-  const [state, dispatch] = useStore();
-
-  const ref = React.useRef<HTMLCanvasElement | null>(null);
+  const [, dispatch] = useStore();
 
   const handleResize = React.useCallback(() => {
     // TODO: remove unfair advantage for players with huge resolution :-)
@@ -35,7 +33,7 @@ function ResizeWatcher({ children }: ResizeWatcherProps) {
   React.useEffect(() => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  }, [handleResize]);
 
   return <>{children}</>;
 }
