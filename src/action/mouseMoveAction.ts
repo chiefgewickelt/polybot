@@ -26,7 +26,7 @@ function handle(state: State, action: MouseMoveAction): State {
   const { mousePos } = action;
 
   const from = state.selfPos;
-  const to = {x: mousePos.x - 600 + state.selfPos.x , y : mousePos.y - 800 + state.selfPos.y};//<-------dirty hack found
+  const to = {x: mousePos.x - 1920/2 + state.selfPos.x , y : mousePos.y - 949/2 + state.selfPos.y};//<-------dirty hack found TODO: variable viewPort size, die KOnstanten sind res * 0.5
 
   const { dx, dy } = calcDirectionVector(from, to);
   const travelLength = calcVectorLength({ dx, dy });

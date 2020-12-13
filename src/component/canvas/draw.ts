@@ -27,7 +27,7 @@ type DrawCollisionArgs = {ctx: CanvasRenderingContext2D, collisions: Collision[]
 function draw_collisions({ctx,  collisions, ...args}: DrawCollisionArgs){
   const  offset = args.offset ?? {x: 0, y: 0};
   const radius = 10;
-  ctx.fillStyle = "#000000";
+  ctx.fillStyle = "#000000";//TODO: dieser eintrag bestimmt auch farbe der Conquer line
   ctx.beginPath();
   collisions.forEach(({ collisionPoint: { x, y } }) => {
     ctx.moveTo(x + offset.x + radius, y + offset.y);
@@ -68,7 +68,7 @@ export function draw(canvas: HTMLCanvasElement, state: State) {
   draw_polygon({ctx, points: state.home, fillcolor: "#11cc33", offset});
   draw_collisions({ctx, collisions: state.collisions, offset});
   draw_player({ctx, pos: state.selfPos, offset});
-  draw_mouse({ctx, pos: state.mousePos, offset});
+  //draw_mouse({ctx, pos: state.mousePos, offset: {x: -offset.x, y: -offset.y}});
   const { conquerLine } = state;
   if (conquerLine) {
     draw_poly_line({ctx, points: conquerLine, offset});
