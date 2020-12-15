@@ -47,7 +47,7 @@ function handle(state: State | undefined, action: ResetAction): State {
     conquerLine: null,
     conquerStart: null,
     mousePos: { x: 0, y: 0 },
-    home: makePolygon(13, 71, selfPos),
+    home: makePolygon(123, 71, selfPos),
     collisions: [],
     isAlive: true,
     dim,
