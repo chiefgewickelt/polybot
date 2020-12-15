@@ -67,7 +67,7 @@ function handleConquerCommit(state: State, homeCollision: Collision): State {
     ...state.conquerLine,
     ...homeMinToMax.reverse()
   ];
-  homeMinToMax.reverse();//turn back to normal order 
+  homeMinToMax.reverse();//turn back to normal order 🤬
   const line2 = [
     ...state.conquerLine,
     ...homeMaxToEnd,
