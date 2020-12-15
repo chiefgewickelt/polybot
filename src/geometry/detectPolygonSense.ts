@@ -9,7 +9,7 @@ function calcSignedAreaUnderEdge(edge: Edge): number {
   return y * dx;
 }
 
-function calcSignedPolygonArea(polygon: Point[]): number {
+export function calcSignedPolygonArea(polygon: Point[]): number {
   const edges = polygonToEdges(polygon);
   return edges.map(calcSignedAreaUnderEdge).reduce((a, b) => a + b, 0);
 }

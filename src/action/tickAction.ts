@@ -1,7 +1,8 @@
 import _ from "lodash";
 import {
   detectPolygonSense,
-  PolygonSense
+  PolygonSense,
+  calcSignedPolygonArea
 } from "src/geometry/detectPolygonSense";
 import { detectRealCollisions } from "src/geometry/detectRealCollisions";
 import { polygonToEdges } from "src/geometry/polygonToEdges";
@@ -45,38 +46,56 @@ function handleConquerCommit(state: State, homeCollision: Collision): State {
   if (!state.conquerLine) {
     throw new Error();
   }
-
-  // TODO: consider recalculation of all collisions
-
   const selfPos = homeCollision.collisionPoint;
-  const conquerSense = detectPolygonSense(state.conquerLine);
-  const homeSense = detectPolygonSense(state.home);
-
   const startIdx = state.conquerStart?.edge?.edgeIdx;
   const endIdx = homeCollision.edge.edgeIdx;
   if (startIdx === undefined || endIdx === undefined) {
     throw new Error("undefined start or end");
   }
-  if ([conquerSense, homeSense].includes(PolygonSense.degenerate)) {
-    throw new Error("degenerate home or conquer");
+  if ( startIdx === endIdx) {
+    throw new Error('end === start in handleConquerCommit');
   }
-
-  const sign = conquerSense === homeSense ? 1 : -1;
-
-  const normalizedConquerLine =
-    sign > 0 ? state.conquerLine : [...state.conquerLine].reverse();
 
   const minIdx = Math.min(startIdx, endIdx);
   const maxIdx = Math.max(startIdx, endIdx);
+  const home0ToMin = state.home.slice(0,minIdx+1);
+  const homeMinToMax = state.home.slice(minIdx+1, maxIdx);
+  const homeMaxToEnd = state.home.slice(maxIdx);
+  
 
-  const home =
-    sign * (startIdx - endIdx) <= 0
-      ? [
-          ...state.home.slice(0, minIdx + 1),
-          ...normalizedConquerLine,
-          ...state.home.slice(maxIdx + 1),
-        ]
-      : [...normalizedConquerLine, ...state.home.slice(minIdx + 1, maxIdx + 1)];
+  const line1 = [
+    ...state.conquerLine,
+    ...homeMinToMax.reverse()
+  ];
+  homeMinToMax.reverse();//turn back to normal order 
+  const line2 = [
+    ...state.conquerLine,
+    ...homeMaxToEnd,
+    ...home0ToMin
+  ];
+const flippedLine1 = [  
+  ...state.conquerLine,
+  ...homeMinToMax
+  ];
+const flippedLine2 = [
+  ...state.conquerLine,
+  ...home0ToMin.reverse(),
+  ...homeMaxToEnd.reverse()
+];
+
+  const area1 = minIdx === startIdx ? 
+    Math.abs(calcSignedPolygonArea(line1)) : 
+      Math.abs(calcSignedPolygonArea(flippedLine1));
+
+  const area2 = minIdx ===startIdx ? 
+    Math.abs(calcSignedPolygonArea(line2)) :
+      Math.abs(calcSignedPolygonArea(flippedLine2));
+if( area1 === area2) {
+  throw new Error('dude this can really happen, this is the achillesHeal of this algorithm')
+}
+const home = minIdx === startIdx ? area1 > area2 ? line1 : line2
+: area1 > area2 ? flippedLine1 : flippedLine2;
+
 
   const conquerLine = null;
   const collisions = [...state.collisions, homeCollision];
